@@ -1,0 +1,121 @@
+אתה AI שיוצר אפליקציות . הבקשה היא לבנות את ה-MVP של QuickQuote – אפליקציה עברית מלאה, מכוונת פרילנסרים ועסקים קטנים בישראל ליצירת הצעות מחיר מעוצבות ואישיות במהירות וקלות.
+
+🎯 Task
+צור אפליקציה רספונסיבית (Desktop & Mobile) ב-RTL מלאה בעברית, עם ממשק נקי, מודרני, מינימליסטי והייטקי, צבעי מותג: לבן (#FFFFFF) כרקע, שחור כהה (#111111) לטקסט, סגול בהיר (#7E57C2) כ-accent. פונטים מומלצים: Rubik או Assistant.
+
+📝 Guidelines
+RTL Support בכל רכיב ועמוד
+
+Whitespace נדיב בין רכיבים
+
+כפתורים גדולים, עגולים, סגול מלא על רקע לבן
+
+Validation inline בשדות טופס + הודעות שגיאה ברורות
+
+Loading spinners / Skeletons ברגעי קריאה ל-API
+
+Auto-Save כל 500ms של טיוטות ל-Supabase
+
+Rate-Limit (מגבלת יצירת 50 הצעות בחודש)
+
+RLS ב-Supabase (משתמש רואה רק את ההצעות שלו)
+
+Privacy & Compliance: קישורים למדיניות פרטיות, תנאי שימוש, הצהרת נגישות, אופציה למחיקת חשבון
+
+🔨 Layout & Structure
+1. Signup / Login Page
+כותרת: “הצטרף ל-QuickQuote”
+
+שדות: אימייל, סיסמה + כפתור “הרשמה”
+
+קישור “התחבר” ו-“שכחתי סיסמה”
+
+Social Login עם Google
+
+Footer: קישורים למדיניות פרטיות ותנאי שימוש
+
+2. Onboarding & Empty-State Dashboard
+Empty-State: כרטיס מרכזי “ברוך הבא ל-QuickQuote! לחץ כאן ליצירת הצעת המחיר הראשונה.” + כפתור “+ צור הצעה חדשה”
+
+Guided Tour ב-4 צעדים (Tooltip) שמסביר את הכפתור “צור הצעה”, את שדות הטופס, את כפתור ה-preview ואת השליחה
+
+3. Dashboard ראשי
+Navbar/Sidebar RTL:
+
+לוגו QuickQuote משמאל
+
+קישורים: Dashboard | + Create Quote | Quotes History | Settings
+
+אזור מרכזי:
+
+כפתור “+ יצירת הצעת מחיר חדשה”
+
+תצוגת כרטיסים של 5 הצעות אחרונות (שם לקוח, תאריך, סטטוס)
+
+קיצורי דרך לסטטיסטיקות (סך הכנסות, אחוז הצלחה, הצעות החודש)
+
+כפתור “איך זה עובד?” לפתיחת וידאו קצר
+
+4. Quote Creation Flow (דף יחיד)
+שלב א׳ – טופס מהיר (inline):
+
+שם לקוח (Input)
+
+תיאור קצר (Textarea)
+
+שעות עבודה (Number)
+
+מחיר בש"ח + Checkbox “כולל מע"מ”
+
+שלב ב׳ – בחירת סגנון: Radio cards “מקצועי” | “מודרני” | “קליל”
+
+שלב ג׳ – Preview ו-Actions:
+
+Preview live (Desktop בצד ימין, Mobile בתחתית)
+
+כפתור “שמירה כטיוטה”
+
+כפתור “צור הצעה” בצבע סגול → פותח Modal עם PDF embed + כפתורים “שלח ללקוח” / “הורד PDF”
+
+5. Manage Quotes Page
+Empty-State: “אין הצעות עדיין” + כפתור “+ צור הצעה”
+
+Full State: טבלה/Grid RTL עם עמודות: שם לקוח | תאריך | סטטוס | פעולות (צפה, שכפל, שלח תזכורת)
+
+סינון וחיפוש לפי סטטוס ושם
+
+6. Settings / Profile Page
+Tabs / Accordions ב-RTL:
+
+פרטי עסק (לוגו Upload, שם, אימייל, טלפון)
+
+AI & Style (העלאת דוגמה חדשה, בחירת Accent Color & Font)
+
+Security (שינוי סיסמה, מחיקת חשבון)
+
+Notifications (הגדרת התראות מייל על סטטוס הצעה)
+
+7. Privacy & Compliance Pages
+עמוד מדיניות פרטיות
+
+עמוד תנאי שימוש
+
+הצהרת נגישות בסיסית (WCAG)
+
+אפשרויות GDPR/membership deletion
+
+⚙️ Technical Stack
+Supabase: Auth, Database, Storage, RLS
+
+OpenAI API (GPT-3.5): ליצירת הטקסט של ההצעות
+
+Base44: לבניית ה-frontend ללא קוד
+
+Optional: Stripe/PayPal לחיוב, Zapier/Make כדי לחבר ל-CRM חיצוני
+
+💰 Business Model
+ניסיון חינם 7–14 ימים
+
+מנוי חודשי ₪50–80
+
+אופציה למנוי שנתי בהנחה (2 חודשי מתנה)
