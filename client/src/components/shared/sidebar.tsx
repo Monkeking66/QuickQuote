@@ -16,9 +16,15 @@ import { useQuery } from "@tanstack/react-query";
 
 export function Sidebar() {
   const { user, logoutMutation } = useAuth();
-  const [location] = useLocation();
+  const [location, navigate] = useLocation();
 
-  const { data: statistics } = useQuery({
+  type StatisticsData = {
+    totalQuotes: number;
+    monthlyQuotes: number;
+    monthlyLimit: number;
+  };
+
+  const { data: statistics = { totalQuotes: 0, monthlyQuotes: 0, monthlyLimit: 50 } } = useQuery<StatisticsData>({
     queryKey: ["/api/statistics"],
     enabled: !!user,
   });
@@ -33,8 +39,8 @@ export function Sidebar() {
   const firstName = user?.firstName || "";
   const lastName = user?.lastName || "";
   const initials = getInitials(`${firstName} ${lastName}`);
-  const monthlyQuotas = statistics?.monthlyQuotes || 0;
-  const monthlyLimit = statistics?.monthlyLimit || 50;
+  const monthlyQuotas = statistics.monthlyQuotes;
+  const monthlyLimit = statistics.monthlyLimit;
   const quotasPercentage = (monthlyQuotas / monthlyLimit) * 100;
 
   // Calculate remaining trial days
@@ -53,17 +59,19 @@ export function Sidebar() {
           {navItems.map((item) => {
             const isActive = item.href === location;
             return (
-              <Link key={item.href} href={item.href}>
-                <a className={cn(
-                  "flex items-center gap-3 p-3 mb-2 rounded-xl transition-colors",
+              <div
+                key={item.href}
+                className={cn(
+                  "flex items-center gap-3 p-3 mb-2 rounded-xl transition-colors cursor-pointer",
                   isActive 
                     ? "bg-accent bg-opacity-10 text-accent" 
                     : "hover:bg-gray-100"
-                )}>
-                  <item.icon className="h-5 w-5" />
-                  <span className={isActive ? "font-medium" : ""}>{item.label}</span>
-                </a>
-              </Link>
+                )}
+                onClick={() => navigate(item.href)}
+              >
+                <item.icon className="h-5 w-5" />
+                <span className={isActive ? "font-medium" : ""}>{item.label}</span>
+              </div>
             );
           })}
         </div>

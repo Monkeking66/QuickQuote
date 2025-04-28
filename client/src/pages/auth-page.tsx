@@ -34,13 +34,13 @@ export default function AuthPage() {
           <div className="mt-8 text-center text-sm text-gray-500">
             <p>
               ההרשמה מהווה הסכמה ל
-              <Link className="text-accent hover:underline mx-1" href="/terms">
+              <span className="text-accent hover:underline mx-1 cursor-pointer" onClick={() => navigate("/terms")}>
                 תנאי השימוש
-              </Link>
+              </span>
               ו
-              <Link className="text-accent hover:underline mx-1" href="/privacy">
+              <span className="text-accent hover:underline mx-1 cursor-pointer" onClick={() => navigate("/privacy")}>
                 מדיניות הפרטיות
-              </Link>
+              </span>
             </p>
           </div>
         </div>

@@ -74,9 +74,9 @@ function LoginForm() {
           )}
         />
         <div className="text-center">
-          <a href="#" className="text-sm text-accent hover:underline">
+          <span className="text-sm text-accent hover:underline cursor-pointer">
             שכחתי סיסמה
-          </a>
+          </span>
         </div>
         <Button type="submit" className="w-full rounded-full" disabled={loginMutation.isPending}>
           {loginMutation.isPending ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : null}
