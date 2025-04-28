@@ -114,7 +114,7 @@ export default function SettingsPage() {
               onValueChange={setActiveTab} 
               className="mb-8"
             >
-              <TabsList className="bg-white mb-2 p-1 border overflow-x-auto">
+              <TabsList className="bg-white mb-2 p-1 border overflow-x-auto dir-rtl">
                 <TabsTrigger value="profile">פרטי עסק</TabsTrigger>
                 <TabsTrigger value="style">עיצוב וסגנון</TabsTrigger>
                 <TabsTrigger value="security">אבטחה</TabsTrigger>
@@ -219,7 +219,7 @@ export default function SettingsPage() {
                                 disabled={updateProfileMutation.isPending}
                               >
                                 {updateProfileMutation.isPending ? (
-                                  <Loader2 className="h-4 w-4 animate-spin ml-2" />
+                                  <Loader2 className="h-4 w-4 animate-spin" />
                                 ) : (
                                   <Check className="h-4 w-4 ml-2" />
                                 )}
