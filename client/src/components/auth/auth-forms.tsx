@@ -16,7 +16,7 @@ export function AuthForms() {
 
   return (
     <Tabs defaultValue="login" value={activeTab} onValueChange={setActiveTab} className="w-full">
-      <TabsList className="grid w-full grid-cols-2 mb-6">
+      <TabsList className="grid w-full grid-cols-2 mb-6 dir-rtl">
         <TabsTrigger value="login">התחברות</TabsTrigger>
         <TabsTrigger value="register">הרשמה</TabsTrigger>
       </TabsList>
@@ -46,7 +46,7 @@ function LoginForm() {
 
   return (
     <Form {...form}>
-      <form onSubmit={onSubmit} className="space-y-4">
+      <form onSubmit={onSubmit} className="space-y-4 dir-rtl text-right">
         <FormField
           control={form.control}
           name="email"
@@ -118,8 +118,8 @@ function RegisterForm() {
 
   return (
     <Form {...form}>
-      <form onSubmit={onSubmit} className="space-y-4">
-        <div className="grid grid-cols-2 gap-4">
+      <form onSubmit={onSubmit} className="space-y-4 dir-rtl text-right">
+        <div className="grid grid-cols-2 gap-4 dir-rtl">
           <FormField
             control={form.control}
             name="firstName"

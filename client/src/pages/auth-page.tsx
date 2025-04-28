@@ -20,7 +20,7 @@ export default function AuthPage() {
       {/* Auth form section */}
       <div className="flex-1 flex flex-col justify-center p-4 md:p-8">
         <div className="w-full max-w-md mx-auto">
-          <div className="text-center mb-8">
+          <div className="text-center mb-8 dir-rtl">
             <h1 className="text-3xl font-bold text-accent mb-2">QuickQuote</h1>
             <p className="text-gray-600">הצעות מחיר מעוצבות במהירות וקלות</p>
           </div>
