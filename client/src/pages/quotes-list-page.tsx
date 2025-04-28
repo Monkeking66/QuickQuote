@@ -30,7 +30,7 @@ export default function QuotesListPage() {
   const { user } = useAuth();
   const [, navigate] = useLocation();
   const [searchQuery, setSearchQuery] = useState("");
-  const [statusFilter, setStatusFilter] = useState<string | undefined>(undefined);
+  const [statusFilter, setStatusFilter] = useState<string>("all");
 
   // Fetch quotes
   const { data: quotes, isLoading } = useQuery<Quote[]>({
@@ -104,7 +104,7 @@ export default function QuotesListPage() {
               <div className="w-full md:w-48">
                 <Select
                   value={statusFilter}
-                  onValueChange={(value) => setStatusFilter(value || undefined)}
+                  onValueChange={(value: string) => setStatusFilter(value || "all")}
                 >
                   <SelectTrigger>
                     <SelectValue placeholder="כל הסטטוסים" />
