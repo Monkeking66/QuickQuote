@@ -42,7 +42,7 @@ export default function QuotesListPage() {
     const matchesSearch = quote.clientName.toLowerCase().includes(searchQuery.toLowerCase()) ||
                           (quote.clientEmail && quote.clientEmail.toLowerCase().includes(searchQuery.toLowerCase()));
     
-    const matchesStatus = !statusFilter || quote.status === statusFilter;
+    const matchesStatus = !statusFilter || statusFilter === "all" || quote.status === statusFilter;
     
     return matchesSearch && matchesStatus;
   });
@@ -110,7 +110,7 @@ export default function QuotesListPage() {
                     <SelectValue placeholder="כל הסטטוסים" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="">כל הסטטוסים</SelectItem>
+                    <SelectItem value="all">כל הסטטוסים</SelectItem>
                     <SelectItem value="draft">טיוטה</SelectItem>
                     <SelectItem value="pending">בהמתנה</SelectItem>
                     <SelectItem value="approved">אושר</SelectItem>
