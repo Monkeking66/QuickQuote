@@ -70,6 +70,38 @@ html {
   transform: scaleX(-1);
 }
 
+/* Direction utilities */
+.dir-rtl {
+  direction: rtl;
+  text-align: right;
+}
+
+.dir-ltr {
+  direction: ltr;
+  text-align: left;
+}
+
+/* RTL adjustments */
+[dir="rtl"] .rtl-ml-auto {
+  margin-right: auto;
+  margin-left: 0 !important;
+}
+
+[dir="rtl"] .rtl-mr-auto {
+  margin-left: auto;
+  margin-right: 0 !important;
+}
+
+[dir="rtl"] .rtl-pl {
+  padding-right: 0.75rem;
+  padding-left: 0 !important;
+}
+
+[dir="rtl"] .rtl-pr {
+  padding-left: 0.75rem;
+  padding-right: 0 !important;
+}
+
 /* Custom scrollbar */
 ::-webkit-scrollbar {
   width: 8px;

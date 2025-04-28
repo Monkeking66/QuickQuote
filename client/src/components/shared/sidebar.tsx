@@ -49,7 +49,7 @@ export function Sidebar() {
   const daysLeft = trialEndDate ? Math.max(0, Math.ceil((trialEndDate.getTime() - today.getTime()) / (1000 * 60 * 60 * 24))) : 0;
   
   return (
-    <aside className="hidden lg:flex flex-col bg-white shadow-md w-64 fixed inset-y-0 z-10">
+    <aside className="hidden lg:flex flex-col bg-white shadow-md w-64 fixed right-0 inset-y-0 z-10">
       <div className="p-6">
         <h1 className="text-2xl font-bold text-accent">QuickQuote</h1>
       </div>
@@ -110,11 +110,11 @@ export function Sidebar() {
           <Button 
             variant="ghost" 
             size="icon" 
-            className="ml-auto" 
+            className="rtl-ml-auto" 
             onClick={() => logoutMutation.mutate()}
             title="התנתק"
           >
-            <LogOutIcon className="h-4 w-4" />
+            <LogOutIcon className="h-4 w-4 rtl-flip" />
           </Button>
         </div>
       </div>

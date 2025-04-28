@@ -60,17 +60,19 @@ export function MobileHeader() {
                 {navItems.map((item) => {
                   const isActive = item.href === location;
                   return (
-                    <Link key={item.href} href={item.href}>
-                      <a 
-                        className={`flex items-center gap-3 p-3 mb-2 rounded-xl ${
-                          isActive ? "bg-accent bg-opacity-10 text-accent" : "hover:bg-gray-100"
-                        }`}
-                        onClick={() => setOpen(false)}
-                      >
-                        <item.icon className="h-5 w-5" />
-                        <span className={isActive ? "font-medium" : ""}>{item.label}</span>
-                      </a>
-                    </Link>
+                    <div
+                      key={item.href}
+                      className={`flex items-center gap-3 p-3 mb-2 rounded-xl cursor-pointer ${
+                        isActive ? "bg-accent bg-opacity-10 text-accent" : "hover:bg-gray-100"
+                      }`}
+                      onClick={() => {
+                        setOpen(false);
+                        window.location.href = item.href;
+                      }}
+                    >
+                      <item.icon className="h-5 w-5" />
+                      <span className={isActive ? "font-medium" : ""}>{item.label}</span>
+                    </div>
                   );
                 })}
               </nav>
