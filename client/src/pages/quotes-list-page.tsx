@@ -84,7 +84,7 @@ export default function QuotesListPage() {
                 onClick={handleNewQuote}
                 className="rounded-full flex items-center gap-2 self-start"
               >
-                <PlusIcon className="h-4 w-4" />
+                <PlusIcon className="h-4 w-4 ml-1" />
                 <span>הצעת מחיר חדשה</span>
               </Button>
             </div>
@@ -95,7 +95,7 @@ export default function QuotesListPage() {
                 <Search className="absolute right-3 top-2.5 h-5 w-5 text-gray-400" />
                 <Input
                   placeholder="חיפוש לפי שם לקוח או אימייל"
-                  className="pl-3 pr-10"
+                  className="pl-3 pr-10 text-right"
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                 />
@@ -139,7 +139,7 @@ export default function QuotesListPage() {
                     onClick={handleNewQuote} 
                     className="rounded-full flex items-center gap-2"
                   >
-                    <PlusIcon className="h-4 w-4" />
+                    <PlusIcon className="h-4 w-4 ml-1" />
                     <span>צור הצעה חדשה</span>
                   </Button>
                 </CardContent>
@@ -147,7 +147,7 @@ export default function QuotesListPage() {
             ) : (
               <Card className="shadow-sm overflow-hidden">
                 <div className="overflow-x-auto">
-                  <table className="w-full">
+                  <table className="w-full dir-rtl">
                     <thead className="bg-gray-50 text-right">
                       <tr>
                         <th className="py-4 px-6 text-sm font-medium text-gray-500">לקוח</th>
