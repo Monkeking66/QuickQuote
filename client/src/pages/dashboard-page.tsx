@@ -136,8 +136,8 @@ export default function DashboardPage() {
           <div>
             <div className="flex justify-between items-center mb-6">
               <h2 className="text-xl font-bold">הצעות אחרונות</h2>
-              <Link href="/quotes">
-                <a className="text-accent hover:underline text-sm">לכל ההצעות</a>
+              <Link href="/quotes" className="text-accent hover:underline text-sm">
+                לכל ההצעות
               </Link>
             </div>
             
@@ -192,7 +192,11 @@ export default function DashboardPage() {
                             {new Date(quote.createdAt).toLocaleDateString('he-IL')}
                           </td>
                           <td className="py-4 px-6 font-medium">
-                            {quote.price ? formatCurrency(quote.price) : '-'}
+                            {quote.price ? (
+                              <div className="flex items-center">
+                                <span className="text-gray-900">{formatCurrency(quote.price)}</span>
+                              </div>
+                            ) : '-'}
                           </td>
                           <td className="py-4 px-6">
                             <StatusBadge status={quote.status} />

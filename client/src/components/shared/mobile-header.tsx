@@ -34,21 +34,13 @@ export function MobileHeader() {
   return (
     <header className="lg:hidden fixed top-0 inset-x-0 bg-white z-10 shadow-sm">
       <div className="flex items-center justify-between p-4">
-        <Avatar className="h-8 w-8">
-          <AvatarFallback className="bg-accent text-white text-sm">
-            {initials}
-          </AvatarFallback>
-        </Avatar>
-        
-        <h1 className="text-xl font-bold text-accent">QuickQuote</h1>
-        
         <Sheet open={open} onOpenChange={setOpen}>
           <SheetTrigger asChild>
             <Button variant="ghost" size="icon" className="rounded-lg">
               <Menu className="h-6 w-6" />
             </Button>
           </SheetTrigger>
-          <SheetContent side="right" className="w-[80%] max-w-sm p-0 dir-rtl">
+          <SheetContent side="left" className="w-[80%] max-w-sm p-0 dir-rtl">
             <div className="flex flex-col h-full">
               <div className="p-6 border-b">
                 <div className="flex items-center gap-3">
@@ -101,6 +93,14 @@ export function MobileHeader() {
             </div>
           </SheetContent>
         </Sheet>
+        
+        <h1 className="text-xl font-bold text-accent">QuickQuote</h1>
+        
+        <Avatar className="h-8 w-8">
+          <AvatarFallback className="bg-accent text-white text-sm">
+            {initials}
+          </AvatarFallback>
+        </Avatar>
       </div>
     </header>
   );

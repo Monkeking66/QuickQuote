@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useLocation } from "wouter";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -6,7 +6,6 @@ import { insertQuoteSchema, InsertQuote } from "@shared/schema";
 import { useMutation } from "@tanstack/react-query";
 import { apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
-import { debounce } from "@/lib/utils";
 
 import { Sidebar } from "@/components/shared/sidebar";
 import { MobileHeader } from "@/components/shared/mobile-header";
@@ -21,7 +20,6 @@ import { ArrowRight, Loader2 } from "lucide-react";
 export default function CreateQuotePage() {
   const [, navigate] = useLocation();
   const { toast } = useToast();
-  const [isSaving, setIsSaving] = useState(false);
 
   const form = useForm<InsertQuote>({
     resolver: zodResolver(insertQuoteSchema),
@@ -29,18 +27,33 @@ export default function CreateQuotePage() {
       clientName: "",
       clientEmail: "",
       projectDescription: "",
-      estimatedHours: undefined,
-      price: undefined,
+      estimatedHours: 0,
+      price: 0,
       includeVat: true,
       status: "draft",
       templateStyle: "professional",
+      additionalDetails: "",
     },
   });
 
   const createQuoteMutation = useMutation({
     mutationFn: async (data: InsertQuote) => {
-      const res = await apiRequest("POST", "/api/quotes", data);
-      return res.json();
+      try {
+        const res = await apiRequest("POST", "/api/quotes", data);
+        if (!res.ok) {
+          const errorText = await res.text();
+          try {
+            const errorJson = JSON.parse(errorText);
+            throw new Error(errorJson.message || 'Failed to create quote');
+          } catch {
+            throw new Error(errorText || 'Failed to create quote');
+          }
+        }
+        return res.json();
+      } catch (error) {
+        console.error('Error creating quote:', error);
+        throw error;
+      }
     },
     onSuccess: (data) => {
       toast({
@@ -50,45 +63,14 @@ export default function CreateQuotePage() {
       navigate(`/quote-design/${data.id}`);
     },
     onError: (error: Error) => {
+      console.error('Error in mutation:', error);
       toast({
         title: "שגיאה בשמירת הצעת המחיר",
-        description: error.message,
+        description: error.message || "אירעה שגיאה בשמירת הצעת המחיר. אנא נסה שוב.",
         variant: "destructive",
       });
     },
   });
-
-  // Auto-save functionality
-  const autoSave = useMutation({
-    mutationFn: async (data: InsertQuote) => {
-      setIsSaving(true);
-      const res = await apiRequest("POST", "/api/quotes", data);
-      return res.json();
-    },
-    onSuccess: (data) => {
-      setIsSaving(false);
-      // Update form with the created quote ID
-      form.setValue("id" as any, data.id);
-    },
-    onError: () => {
-      setIsSaving(false);
-    },
-  });
-
-  // Debounced auto-save function
-  const debouncedAutoSave = debounce((data: InsertQuote) => {
-    if (data.clientName) {
-      autoSave.mutate(data);
-    }
-  }, 500);
-
-  // Subscribe to form changes for auto-save
-  useEffect(() => {
-    const subscription = form.watch((value) => {
-      debouncedAutoSave(value as InsertQuote);
-    });
-    return () => subscription.unsubscribe();
-  }, [form, debouncedAutoSave]);
 
   const onSubmit = form.handleSubmit((data) => {
     createQuoteMutation.mutate(data);
@@ -269,18 +251,6 @@ export default function CreateQuotePage() {
                     </div>
                   </CardContent>
                 </Card>
-                
-                {/* Auto-save notice */}
-                <div className="text-center text-sm text-gray-500 mb-8 flex items-center justify-center">
-                  {isSaving ? (
-                    <>
-                      <Loader2 className="h-3 w-3 animate-spin mr-2" />
-                      <span>שומר שינויים...</span>
-                    </>
-                  ) : (
-                    <span>המידע נשמר אוטומטית בזמן העריכה</span>
-                  )}
-                </div>
                 
                 {/* Action Buttons */}
                 <div className="flex flex-col sm:flex-row justify-between gap-4">

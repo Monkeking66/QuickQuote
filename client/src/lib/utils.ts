@@ -21,8 +21,7 @@ export function formatDateHebrew(date: Date): string {
 // Format currency in ILS
 export function formatCurrency(amount: number): string {
   return new Intl.NumberFormat('he-IL', {
-    style: 'currency',
-    currency: 'ILS',
+    style: 'decimal',
     minimumFractionDigits: 0,
   }).format(amount);
 }

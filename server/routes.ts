@@ -35,6 +35,17 @@ const quoteRateLimiter = async (
   next();
 };
 
+// Rate limiting middleware for GET requests
+const getRequestRateLimiter = async (
+  req: Request, 
+  res: Response, 
+  next: NextFunction
+) => {
+  // Add a small delay to prevent rapid requests
+  await new Promise(resolve => setTimeout(resolve, 100));
+  next();
+};
+
 // Auth check middleware
 const isAuthenticated = (req: Request, res: Response, next: NextFunction) => {
   if (!req.isAuthenticated()) {
@@ -64,13 +75,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
   
-  app.get("/api/quotes", isAuthenticated, async (req, res) => {
+  app.get("/api/quotes", isAuthenticated, getRequestRateLimiter, async (req, res) => {
     const userId = req.user.id;
     const quotes = await storage.getQuotesByUserId(userId);
     res.json(quotes);
   });
   
-  app.get("/api/quotes/recent", isAuthenticated, async (req, res) => {
+  app.get("/api/quotes/recent", isAuthenticated, getRequestRateLimiter, async (req, res) => {
     const userId = req.user.id;
     const limit = parseInt(req.query.limit as string) || 5;
     const quotes = await storage.getQuotesByUserId(userId, limit);

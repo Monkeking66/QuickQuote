@@ -50,7 +50,7 @@ export function Sidebar() {
   
   return (
     <aside className="hidden lg:flex flex-col bg-white shadow-md w-64 fixed right-0 inset-y-0 z-10">
-      <div className="p-6">
+      <div className="p-6 text-right">
         <h1 className="text-2xl font-bold text-accent">QuickQuote</h1>
       </div>
       
@@ -64,7 +64,7 @@ export function Sidebar() {
                 className={cn(
                   "flex items-center gap-3 p-3 mb-2 rounded-xl transition-colors cursor-pointer",
                   isActive 
-                    ? "bg-accent bg-opacity-10 text-accent" 
+                    ? "bg-accent/5 text-accent border-r-2 border-accent" 
                     : "hover:bg-gray-100"
                 )}
                 onClick={() => navigate(item.href)}
@@ -76,7 +76,7 @@ export function Sidebar() {
           })}
         </div>
         
-        <div className="px-6">
+        <div className="px-6 text-right">
           <p className="text-sm text-gray-500 mb-2">המסלול שלך</p>
           <div className="bg-gray-50 rounded-lg p-4">
             <div className="flex justify-between items-center mb-3">
@@ -103,7 +103,7 @@ export function Sidebar() {
               {initials}
             </AvatarFallback>
           </Avatar>
-          <div>
+          <div className="text-right">
             <p className="font-medium">{firstName} {lastName}</p>
             <p className="text-xs text-gray-500">{user?.email}</p>
           </div>

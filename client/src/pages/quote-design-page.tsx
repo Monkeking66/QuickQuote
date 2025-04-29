@@ -12,9 +12,24 @@ import { Button } from "@/components/ui/button";
 import { ArrowLeft, ArrowRight, Loader2 } from "lucide-react";
 
 const TEMPLATES = [
-  { id: "professional", name: "מקצועי", previewUrl: "https://via.placeholder.com/400x500?text=Professional+Template" },
-  { id: "modern", name: "מודרני", previewUrl: "https://via.placeholder.com/400x500?text=Modern+Template" },
-  { id: "casual", name: "קליל", previewUrl: "https://via.placeholder.com/400x500?text=Casual+Template" },
+  { 
+    id: "professional", 
+    name: "מקצועי", 
+    previewUrl: "/templates/professional.png",
+    description: "עיצוב נקי ומקצועי המתאים לעסקים גדולים"
+  },
+  { 
+    id: "modern", 
+    name: "מודרני", 
+    previewUrl: "/templates/modern.png",
+    description: "סגנון עכשווי עם דגש על טיפוגרפיה"
+  },
+  { 
+    id: "casual", 
+    name: "קליל", 
+    previewUrl: "/templates/casual.png",
+    description: "עיצוב ידידותי ונגיש"
+  },
 ];
 
 export default function QuoteDesignPage() {
@@ -23,6 +38,7 @@ export default function QuoteDesignPage() {
   const { toast } = useToast();
   const quoteId = parseInt(params.id);
   const [selectedTemplate, setSelectedTemplate] = useState<string | null>(null);
+  const [isSelecting, setIsSelecting] = useState(false);
 
   // Fetch quote data
   const { data: quote, isLoading } = useQuery<Quote>({
@@ -42,8 +58,12 @@ export default function QuoteDesignPage() {
       const res = await apiRequest("PATCH", `/api/quotes/${quoteId}`, { templateStyle });
       return res.json();
     },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: [`/api/quotes/${quoteId}`] });
+    onSuccess: (data) => {
+      // Update the cache directly instead of invalidating
+      queryClient.setQueryData([`/api/quotes/${quoteId}`], (oldData: any) => ({
+        ...oldData,
+        templateStyle: data.templateStyle
+      }));
     },
     onError: (error: Error) => {
       toast({
@@ -54,11 +74,34 @@ export default function QuoteDesignPage() {
     },
   });
 
+  // Handle template selection
+  const handleTemplateSelect = async (templateId: string) => {
+    if (isSelecting || selectedTemplate === templateId) return;
+    
+    try {
+      setIsSelecting(true);
+      setSelectedTemplate(templateId);
+      await updateTemplateMutation.mutateAsync(templateId);
+    } catch (error) {
+      setSelectedTemplate(quote?.templateStyle || null);
+    } finally {
+      setIsSelecting(false);
+    }
+  };
+
+  // Handle back button
+  const handleBack = () => {
+    navigate("/create-quote");
+  };
+
   // Generate full quote mutation
   const generateQuoteMutation = useMutation({
     mutationFn: async () => {
+      if (!selectedTemplate) {
+        throw new Error("יש לבחור תבנית לפני המשך התהליך");
+      }
       // First save the template choice
-      if (selectedTemplate && selectedTemplate !== quote?.templateStyle) {
+      if (selectedTemplate !== quote?.templateStyle) {
         await updateTemplateMutation.mutateAsync(selectedTemplate);
       }
       return { id: quoteId };
@@ -74,17 +117,6 @@ export default function QuoteDesignPage() {
       });
     },
   });
-
-  // Handle template selection
-  const handleTemplateSelect = (templateId: string) => {
-    setSelectedTemplate(templateId);
-    updateTemplateMutation.mutate(templateId);
-  };
-
-  // Handle back button
-  const handleBack = () => {
-    navigate("/create-quote");
-  };
 
   // Handle generate quote
   const handleGenerateQuote = () => {
@@ -149,18 +181,39 @@ export default function QuoteDesignPage() {
             {/* Design Templates */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
               {TEMPLATES.map((template) => (
-                <div 
+                <button 
                   key={template.id}
-                  className={`border-2 ${selectedTemplate === template.id ? 'border-accent' : 'border-gray-200'} rounded-xl overflow-hidden cursor-pointer hover:border-accent transition-colors`}
+                  type="button"
+                  disabled={isSelecting}
+                  className={`w-full border-2 ${selectedTemplate === template.id ? 'border-accent' : 'border-gray-200'} rounded-xl overflow-hidden cursor-pointer hover:border-accent transition-all duration-200 ${isSelecting ? 'opacity-50 cursor-not-allowed' : ''}`}
                   onClick={() => handleTemplateSelect(template.id)}
                 >
-                  <div className="aspect-w-3 aspect-h-4 bg-gray-100">
-                    <img src={template.previewUrl} alt={`תבנית ${template.name}`} className="object-cover" />
+                  <div className="aspect-w-3 aspect-h-4 bg-gray-100 relative">
+                    <img 
+                      src={template.previewUrl} 
+                      alt={`תבנית ${template.name}`} 
+                      className="object-cover w-full h-full"
+                      onError={(e) => {
+                        e.currentTarget.src = `/templates/placeholder.png`;
+                      }}
+                    />
+                    {selectedTemplate === template.id && (
+                      <div className="absolute inset-0 bg-accent bg-opacity-20 flex items-center justify-center transition-opacity duration-200">
+                        <div className="w-12 h-12 rounded-full bg-accent text-white flex items-center justify-center transform scale-100 transition-transform duration-200">
+                          <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                          </svg>
+                        </div>
+                      </div>
+                    )}
                   </div>
-                  <div className={`p-4 text-center ${selectedTemplate === template.id ? 'bg-accent text-white' : ''}`}>
-                    <p className="font-medium">{template.name}</p>
+                  <div className={`p-4 text-center transition-colors duration-200 ${selectedTemplate === template.id ? 'bg-accent text-white' : ''}`}>
+                    <p className="font-medium mb-1">{template.name}</p>
+                    <p className={`text-sm transition-colors duration-200 ${selectedTemplate === template.id ? 'text-white/80' : 'text-gray-500'}`}>
+                      {template.description}
+                    </p>
                   </div>
-                </div>
+                </button>
               ))}
             </div>
             

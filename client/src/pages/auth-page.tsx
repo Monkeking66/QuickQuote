@@ -31,7 +31,7 @@ export default function AuthPage() {
             </CardContent>
           </Card>
           
-          <div className="mt-8 text-center text-sm text-gray-500">
+          <div className="mt-8 text-center text-sm text-gray-500 dir-rtl">
             <p>
               ההרשמה מהווה הסכמה ל
               <span className="text-accent hover:underline mx-1 cursor-pointer" onClick={() => navigate("/terms")}>
