@@ -37,6 +37,15 @@ export const quotes = pgTable("quotes", {
   additionalDetails: jsonb("additional_details"),
 });
 
+export const templates = pgTable("templates", {
+  id: serial("id").primaryKey(),
+  userId: integer("user_id").notNull().references(() => users.id),
+  name: text("name").notNull(),
+  styleConfig: jsonb("style_config").notNull(),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+});
+
 // User schemas
 export const insertUserSchema = createInsertSchema(users).pick({
   email: true,
@@ -70,6 +79,31 @@ export const insertQuoteSchema = createInsertSchema(quotes).omit({
 
 export const updateQuoteSchema = insertQuoteSchema.partial();
 
+// Template schemas
+export const insertTemplateSchema = createInsertSchema(templates).omit({
+  id: true,
+  userId: true,
+  createdAt: true,
+  updatedAt: true,
+}).extend({
+  name: z.string().min(1, 'נא להזין שם לתבנית'),
+  styleConfig: z.object({
+    colors: z.object({
+      primary: z.string(),
+      secondary: z.string(),
+      accent: z.string(),
+    }),
+    fonts: z.object({
+      heading: z.string(),
+      body: z.string(),
+    }),
+    layout: z.object({
+      spacing: z.number(),
+      borderRadius: z.number(),
+    }),
+  }),
+});
+
 // Types
 export type InsertUser = z.infer<typeof insertUserSchema>;
 export type LoginUser = z.infer<typeof loginUserSchema>;
@@ -77,3 +111,5 @@ export type User = typeof users.$inferSelect;
 export type Quote = typeof quotes.$inferSelect;
 export type InsertQuote = z.infer<typeof insertQuoteSchema>;
 export type UpdateQuote = z.infer<typeof updateQuoteSchema>;
+export type Template = typeof templates.$inferSelect;
+export type InsertTemplate = typeof templates.$inferInsert;

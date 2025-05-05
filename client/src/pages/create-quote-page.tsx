@@ -6,6 +6,9 @@ import { insertQuoteSchema, InsertQuote } from "@shared/schema";
 import { useMutation } from "@tanstack/react-query";
 import { apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
+import { createQuote } from '@/api/quotes';
+import { generateQuoteText } from '@/api/openai';
+import { QuotePreview } from '@/components/QuotePreview';
 
 import { Sidebar } from "@/components/shared/sidebar";
 import { MobileHeader } from "@/components/shared/mobile-header";
@@ -20,6 +23,8 @@ import { ArrowRight, Loader2 } from "lucide-react";
 export default function CreateQuotePage() {
   const [, navigate] = useLocation();
   const { toast } = useToast();
+  const [previewText, setPreviewText] = useState<string>('');
+  const [isGenerating, setIsGenerating] = useState(false);
 
   const form = useForm<InsertQuote>({
     resolver: zodResolver(insertQuoteSchema),
@@ -37,24 +42,7 @@ export default function CreateQuotePage() {
   });
 
   const createQuoteMutation = useMutation({
-    mutationFn: async (data: InsertQuote) => {
-      try {
-        const res = await apiRequest("POST", "/api/quotes", data);
-        if (!res.ok) {
-          const errorText = await res.text();
-          try {
-            const errorJson = JSON.parse(errorText);
-            throw new Error(errorJson.message || 'Failed to create quote');
-          } catch {
-            throw new Error(errorText || 'Failed to create quote');
-          }
-        }
-        return res.json();
-      } catch (error) {
-        console.error('Error creating quote:', error);
-        throw error;
-      }
-    },
+    mutationFn: createQuote,
     onSuccess: (data) => {
       toast({
         title: "הצעת המחיר נשמרה",
@@ -72,9 +60,40 @@ export default function CreateQuotePage() {
     },
   });
 
-  const onSubmit = form.handleSubmit((data) => {
-    createQuoteMutation.mutate(data);
-  });
+  const handleGeneratePreview = async (formData: any) => {
+    try {
+      setIsGenerating(true);
+      const generatedText = await generateQuoteText({
+        clientName: formData.clientName,
+        hours: formData.estimatedHours,
+        price: formData.price,
+        description: formData.projectDescription,
+        templateStyle: formData.templateStyle || 'professional'
+      });
+      setPreviewText(generatedText);
+    } catch (error) {
+      console.error('Error generating preview:', error);
+      toast({
+        title: "שגיאה בצורת תצוגה מקדימה",
+        description: error instanceof Error ? error.message : "אירעה שגיאה בצורת תצוגה מקדימה. אנא נסה שוב מאוחר יותר.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsGenerating(false);
+    }
+  };
+
+  const onSubmit = async (formData: any) => {
+    if (!previewText) {
+      await handleGeneratePreview(formData);
+      return;
+    }
+
+    createQuoteMutation.mutate({
+      ...formData,
+      generatedText: previewText
+    });
+  };
 
   const saveAsDraft = () => {
     const data = form.getValues();
@@ -156,7 +175,8 @@ export default function CreateQuotePage() {
                                 placeholder="דוא״ל מנהל הפרויקט/לקוח" 
                                 type="email" 
                                 dir="ltr"
-                                {...field} 
+                                {...field}
+                                value={field.value || ''}
                               />
                             </FormControl>
                             <FormMessage />
@@ -175,7 +195,8 @@ export default function CreateQuotePage() {
                                 <Textarea 
                                   placeholder="תאר את הפרויקט או השירות המוצע..." 
                                   rows={4} 
-                                  {...field} 
+                                  {...field}
+                                  value={field.value || ''}
                                 />
                               </FormControl>
                               <FormMessage />
@@ -237,7 +258,7 @@ export default function CreateQuotePage() {
                             <FormItem className="flex flex-row items-start space-x-2 space-x-reverse">
                               <FormControl>
                                 <Checkbox
-                                  checked={field.value}
+                                  checked={field.value ?? false}
                                   onCheckedChange={field.onChange}
                                 />
                               </FormControl>
@@ -266,13 +287,13 @@ export default function CreateQuotePage() {
                   <Button 
                     type="submit" 
                     className="rounded-full order-1 sm:order-2"
-                    disabled={createQuoteMutation.isPending}
+                    disabled={createQuoteMutation.isPending || isGenerating}
                   >
                     {createQuoteMutation.isPending ? (
                       <Loader2 className="h-4 w-4 animate-spin mr-2" />
-                    ) : null}
-                    המשך לעיצוב
-                    <ArrowRight className="h-5 w-5 mr-1 rtl-flip" />
+                    ) : isGenerating ? (
+                      'מייצר תצוגה מקדימה...'
+                    ) : 'שמור הצעת מחיר'}
                   </Button>
                 </div>
               </form>
